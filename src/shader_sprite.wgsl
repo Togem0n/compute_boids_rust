@@ -23,8 +23,5 @@ fn vs_main(input: Input) -> Output {
 
 @fragment
 fn fs_main(output: Output) -> @location(0) vec4<f32> {
-    // let pi:f32 = 3.1415926;
-    // let c:f32 = param.colorScale;
-    // return vec4<f32>(c + (1.0-c)*sin(2.0*pi*v_vel.x), c + (1.0-c)*sin(2.0*pi*v_vel.y), c + (1.0-c)*sin(pi*(v_vel.x - v_vel.y)), 1.0);
     return vec4<f32>(1.0, 1.0, 1.0, 1.0);
 }

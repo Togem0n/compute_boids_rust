@@ -8,9 +8,11 @@ use winit::{
     window::WindowBuilder,
 };
 
+use cgmath;
+
 use rand::{
     distributions::{Distribution, Uniform},
-    SeedableRng,
+    SeedableRng, Rng,
 };
 
 struct State {
@@ -77,7 +79,7 @@ impl State {
 
         // what kind of buffer we need?
         // 1. vertex buffer
-        let vertex_data = [-0.01f32, -0.02, 0.01, -0.02, 0.00, 0.02];
+        let vertex_data = [0.0f32, 0.51, 0.3, 0.0, -0.3, 0.00];
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor{
             label: Some("vertex buffer"),
             contents: bytemuck::cast_slice(&vertex_data),
@@ -95,12 +97,19 @@ impl State {
         // 3. particle buffer for read&write before&after particles.
         let mut particle_data = vec![0.0f32; (4 * NUM_PARTICLES) as usize];
         let mut rng = rand::rngs::StdRng::seed_from_u64(42);
-        let unif = Uniform::new_inclusive(-1.0, 1.0);
-        for particle_instance_chunk in particle_data.chunks_mut(4){
-            particle_instance_chunk[0] = unif.sample(&mut rng);         // posX
-            particle_instance_chunk[1] = unif.sample(&mut rng);         // posY
-            particle_instance_chunk[2] = unif.sample(&mut rng) * 0.1;   // velX
-            particle_instance_chunk[3] = unif.sample(&mut rng) * 0.1;   // velY
+        let unif = Uniform::new_inclusive(-1.0, 1.0); 
+        let mut cnt = 0;
+        for particle_chunk in particle_data.chunks_mut(4){
+            // particle_chunk[0] = 2.0 * (unif.sample(&mut rng) - 0.5);         // posX
+            // particle_chunk[1] = 2.0 * (unif.sample(&mut rng) - 0.5);         // posY
+            // particle_chunk[2] = 2.0 * (unif.sample(&mut rng) - 0.5) * 0.1;   // velX
+            // particle_chunk[3] = 2.0 * (unif.sample(&mut rng) - 0.5) * 0.1;   // velY
+            
+            particle_chunk[0] = unif.sample(&mut rng);         // posX
+            particle_chunk[1] = unif.sample(&mut rng);         // posY
+            particle_chunk[2] = unif.sample(&mut rng);   // velX
+            particle_chunk[3] = unif.sample(&mut rng);   // velY
+
         }
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
@@ -121,9 +130,14 @@ impl State {
         // we also need to pass particles buffer to compute shader (using bind group)
 
         // first create render pipeline
+
         let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor{
             label: Some("render"),
-            bind_group_layouts: &[],
+            bind_group_layouts: &[], // The bind group layout pre-defines the types, 
+                                     // purposes and uses of these GPU entities, 
+                                     // which allows the GPU figure out 
+                                     // how to run a pipeline most efficiently ahead of time. 
+                                     // this is probably why it's seperated from the actual bind group
             push_constant_ranges: &[],
         });
 
@@ -225,7 +239,7 @@ impl State {
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_vertex_buffer(0, self.particle_buffers[0].slice(..)); 
             render_pass.set_vertex_buffer(1, self.vertex_buffer.slice(..));
-            render_pass.draw(0..3, 0..NUM_PARTICLES);
+            render_pass.draw(0..3, 0..5);
         }
         self.queue.submit(iter::once(encoder.finish()));
         output.present();
