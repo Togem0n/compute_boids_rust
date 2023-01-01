@@ -30,7 +30,6 @@ struct State {
 
 const NUM_PARTICLES: u32 = 5000;
 
-
 impl State {
     async fn new(window: &Window) ->Self {
         
@@ -100,16 +99,10 @@ impl State {
         let mut rng = rand::rngs::StdRng::seed_from_u64(42);
         let unif = Uniform::new_inclusive(-1.0, 1.0); 
         for particle_chunk in particle_data.chunks_mut(4){
-            // particle_chunk[0] = 2.0 * (unif.sample(&mut rng) - 0.5);         // posX
-            // particle_chunk[1] = 2.0 * (unif.sample(&mut rng) - 0.5);         // posY
-            // particle_chunk[2] = 2.0 * (unif.sample(&mut rng) - 0.5) * 0.1;   // velX
-            // particle_chunk[3] = 2.0 * (unif.sample(&mut rng) - 0.5) * 0.1;   // velY
-            
-            particle_chunk[0] = unif.sample(&mut rng);         // posX
-            particle_chunk[1] = unif.sample(&mut rng);         // posY
-            particle_chunk[2] = unif.sample(&mut rng);   // velX
-            particle_chunk[3] = unif.sample(&mut rng);   // velY
-
+            particle_chunk[0] = unif.sample(&mut rng);  // posX
+            particle_chunk[1] = unif.sample(&mut rng);  // posY
+            particle_chunk[2] = unif.sample(&mut rng);  // velX
+            particle_chunk[3] = unif.sample(&mut rng);  // velY
         }
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
