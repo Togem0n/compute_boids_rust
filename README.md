@@ -8,5 +8,5 @@ To view the simulation of birds, simply run
 Cargo run
 ```
 
-![Boid]()
+![Boid](https://github.com/Togem0n/compute_boids_rust/blob/main/computeBoid.gif)
 
